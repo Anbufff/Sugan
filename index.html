@@ -1,0 +1,1344 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!doctype html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>VIDEO SCREENSHOT by Anbu (Optimized Stability) - திருத்தம்</title> 
+<link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+
+  <style>
+    /* CSS Styles (மாற்றங்கள் இல்லை) */
+    :root { --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --muted:#9ca3af; --accent:#22c5e5; /* நீல-பச்சை நிறமாக மாற்றப்பட்டது */ --accent2:#3b82f6; --warn:#f59e0b; --danger:#ef4444; --chip:#1f2937; --border:#374151; }
+    
+    html, body {
+        height: 100%;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; 
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden; 
+        overflow-y: auto; 
+    }
+    .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 16px;
+        display: block; 
+    }
+    h1 {
+        font-size: 18px;
+        margin: 8px 0 12px;
+        font-weight: 700;
+    }
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+    }
+    .row > * {
+        margin: 4px 0;
+    }
+    button {
+        background: var(--accent); 
+        border: 1px solid #1a9cb9; 
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    button.secondary {
+        background: var(--accent2);
+        border-color: #2459bd;
+    }
+    button.ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+    }
+    button.warn {
+        background: var(--warn);
+        border-color: #cf8507;
+        color: #111;
+    }
+    button[disabled] {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+    
+    /* புது ஸ்டைல்: ஸ்கிரீன்ஷாட் எடுக்கப்பட்ட பின் தற்காலிகமாகப் பயன்படுத்த */
+    button.feedback-flash {
+        background: var(--danger) !important;
+        border-color: var(--danger) !important;
+        color: #fff !important; 
+        transition: background 0.1s, border-color 0.1s;
+        animation: buttonBounce 0.3s ease-out; 
+    }
+
+    /* புதிய keyframes அனிமேஷன் */
+    @keyframes buttonBounce {
+        0% {
+            transform: scale(1); 
+        }
+        50% {
+            transform: scale(1.05); 
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.7); 
+        }
+        100% {
+            transform: scale(1); 
+        }
+    }
+    
+    /* வீடியோ பிளேயர் பகுதி */
+    .video-container {
+        position: relative;
+        width: 100%;
+        margin-top: 8px; 
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    video {
+        width: 100%;
+        display: block;
+        background: #000;
+        will-change: transform;
+    }
+    .file-input-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(15, 23, 42, 0.8); 
+        opacity: 1;
+        transition: opacity 0.3s;
+        pointer-events: auto; 
+        border-radius: 12px;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 10; 
+    }
+    
+    .video-container.has-video .file-input-overlay {
+        opacity: 0;
+        pointer-events: none; 
+    }
+    
+    .file-input-btn {
+        background: var(--accent2);
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        border: none;
+    }
+    
+    /* உண்மையான File Input-ஐ முழுவதுமாக மறைத்தல் */
+    #fileInput {
+        display: none !important; 
+        visibility: hidden !important;
+        position: absolute !important;
+        z-index: -1 !important;
+    }
+
+    .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .chip {
+        background: var(--chip);
+        border: 1px solid var(--border);
+        padding: 6px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--muted);
+    }
+    
+    /* Thumbnails ( Screenshots ) பெட்டிக்கான திருத்தப்பட்ட CSS */
+    .thumb-grid-container {
+      margin-top: 12px;
+      width: 100%;
+      padding: 0;
+      min-height: 40px; 
+    }
+    
+    .thumb-grid {
+        display: flex; 
+        gap: 8px;
+        margin-top: 4px;
+        height: 116px; 
+        overflow-x: auto; 
+        overflow-y: hidden; 
+        white-space: nowrap; 
+        background: var(--chip); 
+        padding: 8px; 
+        border-radius: 8px;
+        align-items: center; 
+        justify-content: flex-start;
+    }
+
+    .thumb {
+        flex-shrink: 0; 
+        width: 100px; 
+        height: 100px; 
+        position: relative;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        background: #000;
+        display: flex; 
+        align-items: center;
+        justify-content: center;
+    }
+
+    .thumb img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; 
+        display: block;
+    }
+
+    .thumb .meta {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        font-size: 10px; 
+        padding: 2px 5px; 
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        opacity: 1; 
+        transition: opacity 0.2s ease-in-out;
+    }
+    .thumb .meta button {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 10px; 
+        padding: 0 4px; 
+        cursor: pointer;
+        line-height: 1; 
+    }
+
+    /* பட்டன் உயரம் */
+    .primary-large {
+        width: 300px; 
+        font-size: 18px; 
+        padding: 15px 12px; 
+    }
+    .mini {
+        font-size: 12px;
+        color: var(--muted);
+    }
+    .spacer {
+        flex-grow: 1;
+    }
+
+    /* **** வேகக் கட்டுப்பாடு ஸ்லைடருக்கான CSS **** */
+    .speed-control-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px; 
+        padding: 8px 12px;
+        background: var(--chip);
+        border-radius: 8px;
+        font-size: 14px;
+        border: 1px solid var(--border);
+    }
+    .speed-control-row label {
+        flex-shrink: 0;
+        font-weight: 600;
+        color: var(--muted);
+    }
+    .speed-control-row input[type="range"] {
+        flex-grow: 1;
+        -webkit-appearance: none;
+        appearance: none;
+        background: var(--border);
+        height: 4px;
+        border-radius: 2px;
+        cursor: pointer;
+        margin: 0 5px;
+    }
+    .speed-control-row input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent2);
+        cursor: pointer;
+    }
+    .speed-control-row input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--accent2);
+        cursor: pointer;
+        border: none;
+    }
+    .speed-control-row #speedValue {
+        flex-shrink: 0;
+        font-weight: 700;
+        color: var(--accent);
+        width: 50px; 
+        text-align: right;
+    }
+
+    /* **** லோகோ ஓவர்லேக்கான புதிய மற்றும் மேம்படுத்தப்பட்ட CSS **** */
+    #logoOverlay {
+        position: absolute;
+        top: 10px; 
+        right: 02px;
+        width: 24px; 
+        height: 14px; 
+        z-index: 20; 
+        background: linear-gradient(45deg, #0f4c81, #2a9d8f); 
+        color: white;
+        border: none; 
+        border-radius: 1px; 
+        padding: 3px; 
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-weight: bold;
+        cursor: grab; 
+        resize: both; 
+        overflow: hidden; 
+        min-width: 20px; 
+        min-height: 10px; 
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); 
+        backdrop-filter: blur(3px); 
+    }
+    #logoOverlay:active {
+        cursor: grabbing;
+    }
+    /* டெக்ஸ்ட் அளவுகள் JavaScript மூலம் கட்டுப்படுத்தப்படும் */
+    #logoOverlay .line1 {
+        font-family: 'Oswald', sans-serif;
+        line-height: 1.1;
+        color: #fca311; 
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6); 
+    }
+    #logoOverlay .line2 {
+        font-family: 'Oswald', sans-serif;
+        line-height: 1.1;
+        color: #ffffff; 
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6); 
+    }
+  </style>
+
+  <script defer src="./lib/jszip.min.js"></script> 
+</head>
+<body>
+<div class="wrap">
+  <h1>VIDEO SCREENSHOT by Anbu</h1> 
+<div class="panel">
+    
+    <div id="videoContainer" class="video-container">
+        <video id="video" controls playsinline preload="metadata"></video>
+        
+        <div id="logoOverlay" style="display: flex;"> 
+            <span class="line1">NEWS</span>
+            <span class="line2">CRiCK</span>
+        </div>
+        
+        <div class="file-input-overlay">
+            <div class="file-input-overlay-content">
+                <button type="button" class="file-input-btn" id="btnSelectVideo">வீடியோ தேர்வு</button>
+                <div style="font-size:14px; color:var(--text); margin-top:10px;">
+                    4K / High Res வீடியோ பிளேபேக் சீராக இருக்கும்படி உகந்ததாக்கப்பட்டுள்ளது.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row" style="margin-top:12px">
+      <button id="btnCaptureNow" class="primary-large">இப்போதே Screenshot</button>
+      
+      <div class="spacer"></div>
+    </div>
+    
+    <div class="speed-control-row">
+        <label for="playbackSpeedSlider">Playback Speed:</label>
+        <input type="range" id="playbackSpeedSlider" min="1.0" max="4.0" step="0.25" value="2.0"> 
+        <span id="speedValue">2.00x</span>
+    </div>
+    
+    <div class="speed-control-row" style="margin-top: 6px; flex-direction: column; align-items: stretch; gap: 6px;">
+        <label>Logo Position & Size:</label>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <button id="btnLogoUp" class="ghost" style="padding: 6px 10px;">↑ Up</button>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <button id="btnLogoLeft" class="ghost" style="padding: 6px 10px;">← Left</button>
+            <button id="btnLogoReduceSize" class="ghost" style="padding: 6px 10px;">- Size</button>
+            <button id="btnLogoIncreaseSize" class="ghost" style="padding: 6px 10px;">+ Size</button>
+            <button id="btnLogoRight" class="ghost" style="padding: 6px 10px;">Right →</button>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+            <button id="btnLogoDown" class="ghost" style="padding: 6px 10px;">↓ Down</button>
+        </div>
+    </div>
+    
+    <div class="thumb-grid-container">
+        <div class="row" id="thumbHeader" style="justify-content: flex-end; margin-bottom: 4px;"> 
+          <div class="mini" id="saveProgressWrap" style="display:none">
+            <progress id="saveProgress" value="0" max="1"></progress>
+            <span id="saveProgressText">Saving…</span>
+          </div>
+        </div>
+        
+        <div id="thumbs" class="thumb-grid"></div>
+    </div>
+    
+    <div class="row" style="margin-top:8px">
+        <button id="btnPickGallery" class="warn">Gallery Folder தேர்வு (ஒருமுறை)</button>
+        <button id="btnDirectSave" class="secondary">Direct Save All → Gallery</button>
+        <div class="spacer"></div>
+    </div>
+    
+    <div class="row" style="margin-top:6px">
+      <button id="btnShare" class="ghost">Share All</button>
+      <button id="btnZip" class="ghost">Download as ZIP</button>
+      <button id="btnSaveFolder" class="ghost">Save to Folder</button>
+      <div class="spacer"></div>
+      <button id="btnToggleLogo" class="ghost">Toggle Logo</button> 
+      <button id="btnInstall" class="ghost" style="display:none">Install App</button>
+    </div>
+    
+    <div class="chips" style="margin-top:8px">
+      <div class="chip" id="metaRes">Resol: –</div>
+      <div class="chip" id="metaDur">Duration: –</div>
+      <div class="chip" id="metaRem">Remaining: –</div>
+      <div class="chip" id="metaCount">Captured: 0</div>
+      <div class="chip" id="metaSize">Total: 0 KB</div>
+      <div class="chip" id="metaGallery">Gallery: Not set</div>
+      <div class="chip" id="status">Ready</div>
+    </div>
+  </div>
+
+</div>
+
+<canvas id="canvas" style="display:none"></canvas>
+<input id="fileInput" type="file" accept="video/*" /> 
+
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+
+  const video = $('#video');
+  const fileInput = $('#fileInput');
+  const videoContainer = $('#videoContainer'); 
+  const btnSelectVideo = $('#btnSelectVideo'); 
+
+  const btnCaptureNow = $('#btnCaptureNow');
+  
+  const btnPickGallery = $('#btnPickGallery'); 
+  const btnDirectSave = $('#btnDirectSave');
+
+  const playbackSpeedSlider = $('#playbackSpeedSlider'); 
+  const speedValue = $('#speedValue'); 
+
+  const btnShare = $('#btnShare'); 
+  const btnZip = $('#btnZip');
+  const btnSaveFolder = $('#btnSaveFolder'); 
+  const btnToggleLogo = $('#btnToggleLogo'); 
+  
+  const metaRes = $('#metaRes'); 
+  const metaDur = $('#metaDur');
+  const metaRem = $('#metaRem'); 
+  const metaCount = $('#metaCount'); 
+  const metaSize = $('#metaSize');
+  const metaGallery = $('#metaGallery'); 
+  const status = $('#status');
+  
+  const logoOverlay = $('#logoOverlay'); 
+  const line1Element = logoOverlay.querySelector('.line1');
+  const line2Element = logoOverlay.querySelector('.line2');
+  
+  // லோகோ கட்டுப்பாடு கூறுகள்
+  const btnLogoUp = $('#btnLogoUp');
+  const btnLogoDown = $('#btnLogoDown');
+  const btnLogoLeft = $('#btnLogoLeft');
+  const btnLogoRight = $('#btnLogoRight');
+  const btnLogoIncreaseSize = $('#btnLogoIncreaseSize'); 
+  const btnLogoReduceSize = $('#btnLogoReduceSize');   
+
+  const NUDGE_STEP = 5;      
+  const SIZE_STEP = 5;       
+  const MIN_LOGO_WIDTH = 20; 
+  const MIN_LOGO_HEIGHT = 10; 
+
+  const thumbs = $('#thumbs'); 
+  const canvas = $('#canvas');
+
+  const progressWrap = $('#saveProgressWrap'); 
+  const progressBar = $('#saveProgress'); 
+  const progressText = $('#saveProgressText');
+
+  let captures = []; 
+  let nextId = 1;
+  let isCapturing = false;
+  let filePrefix = 'frame';
+  let galleryDir = null; 
+  let autoDirect = false; 
+  let lastDropped = 0;
+
+  const FIXED_FORMAT = 'image/jpeg';
+  const FIXED_QUALITY = 1.0; 
+  const FIXED_CAPTURE_SCALE = 1.0; 
+  
+  // IndexedDB Functions (Settings and Gallery Folder Persistence)
+  const DB = 'vsnap-db', STORE = 'kv';
+  function idbOpen() { return new Promise((res, rej) => { const req = indexedDB.open(DB, 1); req.onupgradeneeded = () => req.result.createObjectStore(STORE); req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); }
+  async function idbGet(key){ const db = await idbOpen(); return new Promise((res, rej)=>{ const tx=db.transaction(STORE,'readonly'); const req=tx.objectStore(STORE).get(key); req.onsuccess=()=>res(req.result); req.onerror=()=>rej(tx.error); }); }
+  async function idbSet(key,val){ const db = await idbOpen(); return new Promise((res, rej)=>{ const tx=db.transaction(STORE,'readwrite'); tx.objectStore(STORE).put(val,key); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+  async function idbDel(key){ const db = await idbOpen(); return new Promise((res, rej)=>{ const tx=db.transaction(STORE,'readwrite'); tx.objectStore(STORE).delete(key); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+
+  // Utility Functions
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const pad = (n, w = 4) => String(n).padStart(w, '0');
+  const fmtTimeForName = t => { const msec=Math.floor((t%1)*1000); const s=Math.floor(t)%60; const m=Math.floor(t/60)%60; const h=Math.floor(t/3600); return `${pad(h,2)}-${pad(m,2)}-${pad(s,2)}-${pad(msec,3)}`; };
+  const humanBytes = b => { if (!b) return '0 KB'; const u=['B','KB','MB','GB']; let i=0, n=b; while(n>=1024&&i<u.length-1){n/=1024;i++;} return `${n.toFixed(1)} ${u[i]}`; };
+  const isPlaying = () => !video.paused && !video.ended && video.readyState >= 2;
+  function setStatus(txt) { status.textContent = txt; }
+  function extFromType(type) { if ((type||'').includes('png')) return 'png'; if ((type||'').includes('webp')) return 'webp'; return 'jpg'; }
+
+  function updateMeta() {
+    if (video.videoWidth) metaRes.textContent = `Resol: ${video.videoWidth}×${video.videoHeight}`;
+    else metaRes.textContent = 'Resol: –';
+    
+    if (isFinite(video.duration) && video.duration > 0) {
+      const total = video.duration;
+      const current = video.currentTime;
+      
+      const totalMins = Math.floor(total / 60);
+      const totalSecs = Math.floor(total % 60);
+      metaDur.textContent = `Duration: ${totalMins}:${pad(totalSecs,2)}`;
+
+      const remaining = Math.max(0, total - current); 
+      const remMins = Math.floor(remaining / 60);
+      const remSecs = Math.floor(remaining % 60);
+      metaRem.textContent = `Remaining: ${remMins}:${pad(remSecs,2)}`;
+
+    } else {
+      metaDur.textContent = 'Duration: –';
+      metaRem.textContent = 'Remaining: –';
+    }
+    
+    metaCount.textContent = `Captured: ${captures.length}`;
+    const total = captures.reduce((a,c) => a + (c.blob?.size || 0), 0);
+    metaSize.textContent = `Total: ${humanBytes(total)}`;
+  }
+
+  function render() {
+    const recentCaptures = captures.slice(-3);
+    
+    thumbs.innerHTML = '';
+    recentCaptures.forEach((c) => { 
+      const serial = captures.findIndex(x => x.id === c.id) + 1; 
+      const name = `${filePrefix}_${pad(serial,4)}_time-${fmtTimeForName(c.time)}.${extFromType(c.blob?.type || FIXED_FORMAT)}`; 
+      const div = document.createElement('div');
+      div.className = 'thumb';
+      div.innerHTML = `
+        <img src="${c.url}" alt="${name}" loading="lazy" />
+        <div class="meta">
+          <span>#${pad(serial,3)}</span>
+          <button class="ghost" data-id="${c.id}" title="Delete">✕</button>
+        </div>`;
+      thumbs.appendChild(div);
+    });
+    
+    if (thumbs.scrollWidth > thumbs.clientWidth) {
+        thumbs.scrollLeft = thumbs.scrollWidth;
+    }
+
+    thumbs.querySelectorAll('button[data-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = Number(btn.getAttribute('data-id'));
+        const i = captures.findIndex(x => x.id === id);
+        if (i >= 0) {
+          URL.revokeObjectURL(captures[i].url);
+          captures.splice(i, 1);
+          updateMeta(); 
+          render(); 
+        }
+      });
+    });
+    updateMeta();
+    
+    // Direct Save பட்டனின் நிலையை (நிலைமை) புதுப்பிக்க
+    btnDirectSave.textContent = autoDirect ? 'Auto-Save ON' : 'Direct Save All → Gallery';
+    btnDirectSave.classList.toggle('warn', autoDirect);
+    btnDirectSave.classList.toggle('secondary', !autoDirect);
+
+  }
+
+  function canvasToBlobAsync(canvas, type, quality) {
+    return new Promise(resolve => {
+      if (canvas.toBlob) canvas.toBlob(b => resolve(b), type, quality);
+      else resolve(dataURLToBlob(canvas.toDataURL(type, quality)));
+    });
+  }
+  function dataURLToBlob(dataURL) {
+    const [head, data] = dataURL.split(',');
+    const mime = head.match(/:(.*?);/)[1];
+    const binStr = atob(data);
+    const arr = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) arr[i] = binStr.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+  
+  // லோகோவை அளவை மாற்றும்போது டெக்ஸ்ட் அளவை சரிசெய்யும் செயல்பாடு
+  function updateLogoTextSize() {
+      if (!line1Element || !line2Element) return;
+
+      const currentWidth = logoOverlay.offsetWidth;
+
+      const scaleFactor = currentWidth / 100; 
+
+      const minFont1 = 8;
+      const maxFont1 = 20;
+      const minFont2 = 12;
+      const maxFont2 = 28;
+
+      let newFont1Size = Math.max(minFont1, Math.min(maxFont1, 15 * scaleFactor));
+      let newFont2Size = Math.max(minFont2, Math.min(maxFont2, 22 * scaleFactor));
+      
+      line1Element.style.fontSize = `${newFont1Size}px`;
+      line2Element.style.fontSize = `${newFont2Size}px`;
+  }
+
+  // லோகோ ஓவர்லேவை கேன்வாஸில் வரைய புதிய செயல்பாடு
+  function drawLogoOverlay(ctx, videoW, videoH) {
+      if (logoOverlay.style.display === 'none') return; 
+
+      const videoRect = videoContainer.getBoundingClientRect();
+      const overlayRect = logoOverlay.getBoundingClientRect();
+      
+      const scaleX = videoW / videoRect.width;
+      const scaleY = videoH / videoRect.height;
+
+      const x = (overlayRect.left - videoRect.left) * scaleX;
+      const y = (overlayRect.top - videoRect.top) * scaleY;
+      const w = overlayRect.width * scaleX;
+      const h = overlayRect.height * scaleY;
+
+      // பின்னணி Gradient
+      const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
+      gradient.addColorStop(0, '#0f4c81'); 
+      gradient.addColorStop(1, '#2a9d8f');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(x, y, w, h);
+      
+      // டெக்ஸ்ட்
+      if (line1Element && line2Element) { 
+          const color1 = window.getComputedStyle(line1Element).color;
+          const color2 = window.getComputedStyle(line2Element).color;
+
+          // CSS இலிருந்து பெறப்பட்ட தற்போதைய ஃபான்ட் அளவுகளைப் பயன்படுத்துகிறோம்
+          const fontSize1 = parseFloat(window.getComputedStyle(line1Element).fontSize) * scaleX;
+          const fontSize2 = parseFloat(window.getComputedStyle(line2Element).fontSize) * scaleX;
+          
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle'; 
+
+          // டெக்ஸ்ட் ஷேடோவை முதலில் வரைக
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+          ctx.shadowBlur = 2 * scaleX;
+          ctx.shadowOffsetX = 1 * scaleX;
+          ctx.shadowOffsetY = 1 * scaleY;
+          
+          ctx.fillStyle = color1;
+          ctx.font = `bold ${fontSize1}px Oswald, sans-serif`; 
+          ctx.fillText(line1Element.textContent, x + w / 2, y + h / 2 - fontSize2 * 0.5); 
+          
+          ctx.fillStyle = color2;
+          ctx.font = `bold ${fontSize2}px Oswald, sans-serif`; 
+          ctx.fillText(line2Element.textContent, x + w / 2, y + h / 2 + fontSize2 * 0.5);
+
+          // ஷேடோவை ரீசெட் செய்யவும்
+          ctx.shadowBlur = 0; 
+          ctx.shadowColor = 'transparent'; 
+      }
+  }
+  
+  async function rVFC_Capture(now, metadata) {
+    if (!isCapturing) return; 
+
+    try {
+      const scale = FIXED_CAPTURE_SCALE; 
+      const targetW = Math.max(2, Math.round(video.videoWidth * scale));
+      const targetH = Math.max(2, Math.round(video.videoHeight * scale));
+      canvas.width = targetW; canvas.height = targetH;
+      const ctx = canvas.getContext('2d', { alpha:false, desynchronized:true });
+      
+      const bmp = await createImageBitmap(video);
+      ctx.drawImage(bmp, 0, 0, targetW, targetH);
+      if (bmp.close) bmp.close();
+      
+      // லோகோவை கேன்வாஸில் வரைகிறோம்
+      drawLogoOverlay(ctx, targetW, targetH); 
+      
+      const type = FIXED_FORMAT;
+      const quality = FIXED_QUALITY;
+      const blob = await canvasToBlobAsync(canvas, type, quality);
+      if (!blob) { setStatus('Blob உருவாக்க முடியவில்லை.'); return; }
+      
+      let item;
+      const currentTime = metadata?.mediaTime || video.currentTime; 
+      
+      item = { id: nextId++, time: currentTime, blob, url: URL.createObjectURL(blob) };
+      captures.push(item); render();
+
+      // பட்டனை ஃபிளாஷ் செய்ய
+      btnCaptureNow.classList.add('feedback-flash');
+      setTimeout(() => {
+          btnCaptureNow.classList.remove('feedback-flash');
+      }, 150); 
+
+      // நேரடியாக கேலரியில் சேமிக்கும் லாஜிக்
+      if (autoDirect && galleryDir) {
+        try { 
+            await saveOneToGallery(item); 
+        } catch(e){ 
+            console.error("Direct Save failed:", e);
+            setStatus(`Direct Save தோல்வி: ${e.message.split('\n')[0]}`);
+            autoDirect = false; 
+            render(); 
+        }
+      }
+
+    } catch(e) {
+        setStatus(`Capture failed: ${e.message}`);
+    } finally { 
+        isCapturing = false; 
+    }
+  }
+  
+  // *** முக்கிய செயல்பாடு: ஸ்கிரீன்ஷாட் எடுத்து ஆட்டோ-ரெஸ்யூம் செய்தல் ***
+  async function captureOne() {
+    if (!video.videoWidth || isCapturing) return;
+    
+    // 1. தற்போதைய பிளேபேக் நிலையைப் பதிவு செய்யவும்
+    const wasPlaying = isPlaying(); 
+    const originalTime = video.currentTime;
+    
+    isCapturing = true; 
+    
+    // rVFC பயன்படுத்த முடியாத போது, தற்காலிகமாக வீடியோவை நிறுத்தவும் (Pause)
+    if (wasPlaying) {
+        setStatus('Paused for Capture...');
+        video.pause();
+        // pause நிகழ்வு நடைமுறைக்கு வர சிறிது நேரம் காத்திருக்கவும் (Browser-க்கு நேரம் கொடுக்க)
+        await sleep(20); // ⬅️ திருத்தம்: 100ms-லிருந்து 20ms-க்குக் குறைக்கப்பட்டது
+    }
+    
+    // rVFC-ஐப் பயன்படுத்த முயற்சிப்போம் (rVFC ஆனது Playing நிலையில் மட்டுமே வேலை செய்யும்)
+    const useRVFC = wasPlaying && 'requestVideoFrameCallback' in video && video.playbackRate < 2.0;
+
+    if (useRVFC) {
+        // rVFC பயன்படுத்தினால், அதுவே frame-ஐப் பிடிக்கும்.
+        setStatus('Requesting next video frame (rVFC)...');
+        // rVFC_Capture-ல் finally block இல்லை, அதனால் rVFC_Capture-ல் isCapturing = false நடக்கும்
+        video.requestVideoFrameCallback(rVFC_Capture);
+        
+        // rVFC-க்கு பிறகு ஆட்டோ-ரெஸ்யூம் செய்ய வேண்டும்
+        setTimeout(() => {
+            if (wasPlaying) {
+                video.play().catch(e => {
+                    console.warn("rVFC Autoplay resume failed:", e);
+                    setStatus('Capture முடிந்தது, Play பொத்தானை கிளிக் செய்யவும்.');
+                });
+            }
+        }, 50); // ⬅️ திருத்தம்: 150ms-லிருந்து 50ms-க்குக் குறைக்கப்பட்டது
+        
+    } else {
+        try {
+            const scale = FIXED_CAPTURE_SCALE; 
+            const targetW = Math.max(2, Math.round(video.videoWidth * scale));
+            const targetH = Math.max(2, Math.round(video.videoHeight * scale));
+            canvas.width = targetW; 
+            canvas.height = targetH;
+            const ctx = canvas.getContext('2d', { alpha:false, desynchronized:true });
+
+            // Canvas மூலம் Frame-ஐ எடுக்கிறோம் (Manual Capture)
+            const bmp = await createImageBitmap(video);
+            ctx.drawImage(bmp, 0, 0, targetW, targetH);
+            if (bmp.close) bmp.close();
+
+            // லோகோவை கேன்வாஸில் வரைகிறோம்
+            drawLogoOverlay(ctx, targetW, targetH); 
+
+            const type = FIXED_FORMAT;
+            const quality = FIXED_QUALITY;
+            const blob = await canvasToBlobAsync(canvas, type, quality);
+            if (!blob) { 
+                setStatus('Blob உருவாக்க முடியவில்லை.'); 
+                throw new Error("Failed to create blob."); 
+            }
+            
+            let item = { id: nextId++, time: video.currentTime, blob, url: URL.createObjectURL(blob) };
+            captures.push(item); render();
+
+            // பட்டனை ஃபிளாஷ் செய்ய
+            btnCaptureNow.classList.add('feedback-flash');
+            setTimeout(() => {
+                btnCaptureNow.classList.remove('feedback-flash');
+            }, 150); 
+            
+            if (autoDirect && galleryDir) {
+                try { await saveOneToGallery(item); } 
+                catch(e){ setStatus(`Direct Save தோல்வி: ${e.message.split('\n')[0]}`); autoDirect = false; render(); }
+            }
+            
+            setStatus(wasPlaying ? 'Capture Success (Paused/Resumed).' : 'Capture Success.');
+
+        } catch(e) {
+            setStatus(`Capture failed: ${e.message}`);
+        } finally {
+            isCapturing = false;
+            
+            // 2. வீடியோ இயங்கிக் கொண்டிருந்தால், அதை மீண்டும் இயக்கவும் (Resume)
+            if (wasPlaying) {
+                
+                // Seek நிகழ்வு காரணமாக timeupdate சிக்காமல் இருக்க, நேரத்தை உறுதிப்படுத்தலாம்
+                if (video.currentTime !== originalTime) {
+                    video.currentTime = originalTime; // Frame-ஐ மாற்றாமல் இருக்க
+                }
+                
+                // *** முக்கிய பகுதி: வீடியோவை தானாக மீண்டும் இயக்குதல் ***
+                video.play().catch(e => {
+                    console.warn("Manual Capture Autoplay resume failed:", e);
+                    setStatus('Capture முடிந்தது, Play பொத்தானை கிளிக் செய்யவும்.');
+                });
+            }
+        }
+    }
+  }
+  // *** முக்கிய செயல்பாடு முடிவு ***
+  
+  function clearAll() { 
+    for (const c of captures) { try { URL.revokeObjectURL(c.url); } catch {} }
+    captures = []; nextId = 1; render(); setStatus('Cleared.');
+  }
+
+  function currentSortedWithNames() {
+    const list = [...captures].sort((a,b) => a.time - b.time);
+    return list.map((c, i) => {
+      const serial = i + 1;
+      const name = `${filePrefix}_${pad(serial,4)}_time-${fmtTimeForName(c.time)}.${extFromType(c.blob.type)}`;
+      return { ...c, serial, name };
+    });
+  }
+  function downloadBlob(blob, name) {
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+
+  async function saveAsZip() {
+    if (!captures.length) { setStatus('முதலில் screenshots எடுக்கவும்.'); return; }
+    if (!window.JSZip) { setStatus('ZIP library load ஆகவில்லை.'); return; }
+    const list = currentSortedWithNames();
+    setStatus('ZIP தயாராகிறது…');
+    progressWrap.style.display = 'inline-flex'; progressBar.value = 0; progressText.textContent = 'Preparing…';
+    const zip = new JSZip(); let done = 0;
+    for (const c of list) { zip.file(c.name, c.blob); done++; progressBar.value = done / list.length; progressText.textContent = `Adding ${done}/${list.length}`; await sleep(0); }
+    const blob = await zip.generateAsync({ type:'blob' }, m => { if (m.percent != null) { progressBar.value = m.percent/100; progressText.textContent = `Compressing ${m.percent.toFixed(0)}%`; } });
+    const stamp = new Date().toISOString().replaceAll(':','-').split('.')[0];
+    downloadBlob(blob, `${filePrefix}_captures_${stamp}.zip`);
+    setStatus('ZIP download தொடங்கியது.'); progressWrap.style.display = 'none';
+  }
+  async function shareAll() {
+    if (!captures.length) { setStatus('முதலில் screenshots எடுக்கவும்.'); return; }
+    const list = currentSortedWithNames();
+    const files = list.map(c => new File([c.blob], c.name, { type: c.blob.type }));
+    const canShare = navigator.canShare && navigator.canShare({ files });
+    if (!canShare) { setStatus('இந்த browser-ல் Share ஆதரவு இல்லை.'); return; }
+    const MAX = 50;
+    await navigator.share({ files: files.slice(0, MAX), title: 'Video Screenshots' });
+    setStatus('Share sheet காட்டப்பட்டது.');
+  }
+  async function saveToFolderManual() {
+    if (!captures.length) { setStatus('முதலில் screenshots எடுக்கவும்.'); return; }
+    if (!('showDirectoryPicker' in window)) { setStatus('Directory save ஆதரவு இல்லை.'); return; }
+    if (!isSecureContext) { setStatus('HTTPS/PWA-வில் ஓட்டுங்கள்.'); return; }
+    try {
+      let dir;
+      try { dir = await window.showDirectoryPicker({ mode:'readwrite', startIn:'pictures' }); }
+      catch(e) {
+        if (e?.name === 'TypeError' || String(e).includes('startIn')) dir = await window.showDirectoryPicker({ mode:'readwrite' });
+        else if (e?.name === 'AbortError') { setStatus('Folder தேர்வு ரத்து.'); return; }
+        else { console.error(e); setStatus('Folder picker திறக்கவில்லை.'); return; }
+      }
+      await writeAllToDir(dir);
+      setStatus('Images தேர்வு செய்த கோப்பகத்தில் சேமிக்கப்பட்டது.');
+    } catch(e){ console.error(e); setStatus('Save தோல்வி/ரத்து.'); }
+  }
+
+  function updateGalleryChip() { 
+      metaGallery.textContent = galleryDir 
+          ? `Gallery: ${galleryDir.name} (Auto-Save: ${autoDirect ? 'ON' : 'OFF'})` 
+          : 'Gallery: Not set'; 
+  }
+  async function ensurePermission(dir) {
+    if (!dir) return false;
+    let p = await dir.queryPermission({ mode:'readwrite' });
+    if (p === 'granted') return true;
+    if (p === 'prompt') p = await dir.requestPermission({ mode:'readwrite' });
+    return p === 'granted';
+  }
+  async function pickGalleryFolder() {
+    if (!('showDirectoryPicker' in window)) { setStatus('இந்த device/browser ஆதரவு இல்லை.'); return; }
+    if (!isSecureContext) { setStatus('HTTPS/PWA தேவை.'); return; }
+    try {
+      let dir;
+      try { dir = await window.showDirectoryPicker({ mode:'readwrite', startIn:'pictures' }); }
+      catch(e) {
+        if (e?.name === 'TypeError' || String(e).includes('startIn')) dir = await window.showDirectoryPicker({ mode:'readwrite' });
+        else if (e?.name === 'AbortError') { setStatus('Folder தேர்வு ரத்து.'); return; }
+        else { console.error(e); setStatus('Folder picker திறக்கவில்லை.'); return; }
+      }
+      if (!await ensurePermission(dir)) { setStatus('அனுமதி இல்லை.'); return; }
+      galleryDir = dir; 
+      updateGalleryChip();
+      try { await navigator.storage?.persist?.(); } catch {}
+      try { await idbSet('galleryDir', dir); } catch {}
+      setStatus('Gallery folder set. Auto-Save-ஐ இயக்கவும்.');
+    } catch(e){ setStatus('Folder தேர்வு தோல்வி/ரத்து.'); }
+  }
+  async function restoreGalleryFolder() {
+    try {
+      const dir = await idbGet('galleryDir');
+      if (dir && await ensurePermission(dir)) { galleryDir = dir; }
+      else { galleryDir = null; await idbDel('galleryDir'); }
+      
+      const savedAutoDirect = await idbGet('autoDirect');
+      autoDirect = !!savedAutoDirect && !!galleryDir; // Gallery இல்லையென்றால் Auto-Save இருக்காது
+      
+      updateGalleryChip();
+
+    } catch {}
+  }
+  async function writeAllToDir(dir) {
+    const list = currentSortedWithNames();
+    progressWrap.style.display = 'inline-flex'; progressBar.value = 0; progressText.textContent = 'Saving…';
+    let i = 0;
+    for (const c of list) {
+      const fh = await dir.getFileHandle(c.name, { create:true });
+      const ws = await fh.createWritable(); await ws.write(c.blob); await ws.close();
+      i++; progressBar.value = i / list.length; progressText.textContent = `Saved ${i}/${list.length}`; await sleep(0);
+    }
+    progressWrap.style.display = 'none';
+  }
+  
+  async function directSaveToggle() {
+      if (!('showDirectoryPicker' in window)) { setStatus('இந்த device/browser ஆதரவு இல்லை.'); return; }
+      
+      if (!galleryDir) {
+          setStatus('முதலில் "Gallery Folder தேர்வு" செய்க.');
+          await pickGalleryFolder(); 
+          if (!galleryDir) return; 
+      }
+      
+      if (!await ensurePermission(galleryDir)) {
+          setStatus('Permission இல்லை. மீண்டும் Folder தேர்வு செய்யவும்.'); 
+          return;
+      }
+      
+      autoDirect = !autoDirect;
+      await idbSet('autoDirect', autoDirect);
+      
+      if (autoDirect) {
+          setStatus(`Auto-Save ON. Screenshots now save directly to ${galleryDir.name}.`);
+      } else {
+          setStatus('Auto-Save OFF.');
+      }
+      render(); 
+  }
+  
+  async function directSaveAll() {
+    if (!captures.length) { setStatus('முதலில் screenshots எடுக்கவும்.'); return; }
+    if (!galleryDir) { setStatus('முதலில் "Gallery Folder தேர்வு" செய்க.'); return; }
+    if (!await ensurePermission(galleryDir)) { setStatus('Permission இல்லை.'); return; }
+    try { await writeAllToDir(galleryDir); setStatus('Gallery-க்கு சேமிக்கப்பட்டது.'); }
+    catch(e){ setStatus('Direct Save All தோல்வி.'); }
+  }
+  
+  async function saveOneToGallery(capture) {
+    const name = `${filePrefix}_time-${fmtTimeForName(capture.time)}.${extFromType(capture.blob.type)}`;
+    const fh = await galleryDir.getFileHandle(name, { create:true });
+    const ws = await fh.createWritable(); await ws.write(capture.blob); await ws.close();
+    setStatus(`Saved: ${name}`);
+  }
+
+  async function setSpeed(v) {
+    const val = Number(v); 
+    video.playbackRate = val;
+    let displayVal = val.toFixed(2);
+    if (displayVal.endsWith('.00')) displayVal = val.toFixed(1);
+    speedValue.textContent = `${displayVal}x`; 
+    try { await idbSet('playbackRate', val); } catch {}
+  }
+
+  async function restoreSettings() {
+    try {
+        const savedRate = await idbGet('playbackRate');
+        await setSpeed(savedRate || 2.0); 
+    } catch (e) {
+        console.error("Failed to restore settings:", e);
+        await setSpeed(2.0); 
+    }
+    await restoreGalleryFolder();
+  }
+  
+  // லோகோ நகர்த்தும் செயல்பாடு
+  function nudgeLogo(direction) {
+    if (logoOverlay.style.display === 'none') { setStatus('Logo Overlay is hidden.'); return; }
+
+    const containerRect = videoContainer.getBoundingClientRect();
+    const logoRect = logoOverlay.getBoundingClientRect();
+    
+    let currentX = parseFloat(logoOverlay.style.left) || 0; 
+    let currentY = parseFloat(logoOverlay.style.top) || 0;
+    
+    // CSS-இல் உள்ள right/top-ஐ left/top-க்கு மாற்ற
+    if (!logoOverlay.style.left || logoOverlay.style.left === 'auto') {
+        currentX = containerRect.width - logoRect.width - 2; 
+    }
+    if (!logoOverlay.style.top || logoOverlay.style.top === 'auto') {
+        currentY = 10;
+    }
+    
+    let newX = currentX;
+    let newY = currentY;
+
+    switch (direction) {
+        case 'up': newY -= NUDGE_STEP; break;
+        case 'down': newY += NUDGE_STEP; break;
+        case 'left': newX -= NUDGE_STEP; break;
+        case 'right': newX += NUDGE_STEP; break;
+    }
+
+    newX = Math.max(0, Math.min(newX, containerRect.width - logoRect.width));
+    newY = Math.max(0, Math.min(newY, containerRect.height - logoRect.height));
+
+    logoOverlay.style.left = `${newX}px`;
+    logoOverlay.style.top = `${newY}px`;
+    logoOverlay.style.right = 'auto'; 
+    logoOverlay.style.bottom = 'auto';
+    
+    setStatus(`Logo Nudged: ${direction}`);
+  }
+
+  // லோகோ அளவை மாற்றும் செயல்பாடு
+  function changeLogoSize(increase) {
+    if (logoOverlay.style.display === 'none') { setStatus('Logo Overlay is hidden.'); return; }
+
+    let currentWidth = logoOverlay.offsetWidth;
+    let currentHeight = logoOverlay.offsetHeight;
+
+    let newWidth = currentWidth;
+    let newHeight = currentHeight;
+
+    const aspectRatio = currentHeight / currentWidth || 1; 
+
+    if (increase) {
+        newWidth += SIZE_STEP;
+        newHeight += Math.round(SIZE_STEP * aspectRatio); 
+        setStatus('Logo Size Increased');
+    } else {
+        newWidth -= SIZE_STEP;
+        newHeight -= Math.round(SIZE_STEP * aspectRatio); 
+        setStatus('Logo Size Reduced');
+    }
+
+    newWidth = Math.max(MIN_LOGO_WIDTH, newWidth);
+    newHeight = Math.max(MIN_LOGO_HEIGHT, newHeight);
+
+    logoOverlay.style.width = `${newWidth}px`;
+    logoOverlay.style.height = `${newHeight}px`;
+
+    updateLogoTextSize();
+  }
+  
+  function setInitialLogoPosition() {
+    const containerRect = videoContainer.getBoundingClientRect();
+    const logoRect = logoOverlay.getBoundingClientRect();
+    
+    const computedRight = window.getComputedStyle(logoOverlay).right;
+
+    if (computedRight !== 'auto' && logoOverlay.style.right !== 'auto') {
+        const rightValue = parseFloat(computedRight);
+        const initialLeft = containerRect.width - logoRect.width - rightValue;
+        logoOverlay.style.left = `${initialLeft}px`;
+        logoOverlay.style.right = 'auto';
+    }
+    
+    if (!logoOverlay.style.top || logoOverlay.style.top === 'auto') {
+        logoOverlay.style.top = '10px';
+    }
+  }
+  
+  // *** Event Listeners ***
+  
+  btnSelectVideo.addEventListener('click', () => { fileInput.click(); });
+
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files?.[0]; 
+    if (!f) return;
+    
+    clearAll();
+    const url = URL.createObjectURL(f);
+    video.src = url;
+    filePrefix = f.name.replace(/\.[^.]+$/, '').replace(/[^\w\-]+/g, '_') || 'frame';
+    setStatus('வீடியோ load ஆகிறது…');
+    
+    videoContainer.classList.add('has-video');
+    
+    video.play().catch(e => {
+        console.warn("Autoplay failed:", e);
+        setStatus('Autoplay தோல்வியடைந்தது. Play பொத்தானை கிளிக் செய்யவும்.');
+    }); 
+    fileInput.value = '';
+  });
+
+  playbackSpeedSlider.addEventListener('input', (e) => { setSpeed(e.target.value); });
+  playbackSpeedSlider.addEventListener('change', (e) => { setSpeed(e.target.value); });
+  
+  video.addEventListener('emptied', () => {
+      videoContainer.classList.remove('has-video');
+      clearAll();
+  });
+
+  video.addEventListener('loadedmetadata', () => { 
+      updateMeta(); 
+      setStatus('வீடியோ தயார்.'); 
+      videoContainer.classList.add('has-video');
+  });
+  video.addEventListener('play', () => setStatus('Playing…'));
+  video.addEventListener('pause', () => setStatus('Paused.')); 
+  
+  // *** Stuck ஆவதைக் கையாள முக்கியத் திருத்தம்:
+  video.addEventListener('waiting', () => {
+      setStatus('Buffering/Waiting…');
+      // Buffer ஆனவுடன் தானாக மீண்டும் இயக்க முயற்சிக்கவும்
+      if (video.paused && video.readyState >= 3) {
+          video.play().catch(e => console.warn("Waiting Autoplay failed:", e));
+      }
+  });
+
+  video.addEventListener('stalled', () => {
+    setStatus('Stalled/Stuck. Trying to resume...');
+    // Stuck ஆகும்போது உடனடியாக மீண்டும் இயக்க முயற்சிக்கவும்
+    if (!video.paused) {
+        video.play().catch(e => console.warn("Stalled Autoplay failed:", e));
+    }
+  });
+  // *** திருத்தம் முடிவு ***
+  
+  video.addEventListener('seeking', () => setStatus('Seeking…'));
+  
+  video.addEventListener('seeked', () => { 
+      updateMeta(); 
+      setStatus('Seeked. Ready to play.');
+      
+      // *** Stuck ஆவதைக் கையாள முக்கியத் திருத்தம்:
+      // seeked முடிந்த பிறகு வீடியோ Pause-ல் இருந்தால் மட்டுமே Play செய்யவும்.
+      // இது Capture லாஜிக்கில் உள்ள Pause/Play conflicts-களைத் தவிர்க்க உதவும்.
+      if (!isPlaying() && !isCapturing && video.readyState >= 3) { 
+          video.play().catch(e => console.warn("Seeked Autoplay failed:", e));
+      }
+      // *** திருத்தம் முடிவு ***
+  });
+  
+  video.addEventListener('canplay', () => {
+      setStatus('Ready to play.');
+      if (video.paused) {
+          video.play().catch(e => console.warn("Canplay Autoplay failed:", e));
+      }
+  });
+
+
+  video.addEventListener('ended', () => { setStatus('Ended.'); });
+  video.addEventListener('resize', () => updateMeta());
+  video.addEventListener('timeupdate', () => updateMeta());
+
+
+  btnCaptureNow.addEventListener('click', () => { captureOne(); });
+  
+  btnZip.addEventListener('click', () => saveAsZip());
+  btnShare.addEventListener('click', () => shareAll());
+  btnSaveFolder.addEventListener('click', () => saveToFolderManual());
+  btnPickGallery.addEventListener('click', () => pickGalleryFolder());
+  btnDirectSave.addEventListener('click', () => directSaveToggle()); 
+  
+  btnToggleLogo.addEventListener('click', () => {
+    if (logoOverlay.style.display === 'none') {
+        logoOverlay.style.display = 'flex'; 
+        updateLogoTextSize(); 
+        setStatus('Logo Overlay ON');
+    } else {
+        logoOverlay.style.display = 'none'; 
+        setStatus('Logo Overlay OFF');
+    }
+  });
+  
+  btnLogoUp.addEventListener('click', () => nudgeLogo('up'));
+  btnLogoDown.addEventListener('click', () => nudgeLogo('down'));
+  btnLogoLeft.addEventListener('click', () => nudgeLogo('left'));
+  btnLogoRight.addEventListener('click', () => nudgeLogo('right'));
+  
+  btnLogoIncreaseSize.addEventListener('click', () => changeLogoSize(true));
+  btnLogoReduceSize.addEventListener('click', () => changeLogoSize(false));
+  
+  const supportsDirPicker = 'showDirectoryPicker' in window;
+  if (!supportsDirPicker) { 
+    btnPickGallery.style.display='none'; 
+    btnDirectSave.style.display='none'; 
+    btnSaveFolder.style.display='none';
+  }
+  window.addEventListener('load', () => { if (!window.JSZip) btnZip.style.display = 'none'; });
+
+  restoreSettings();
+  
+  logoOverlay.style.display = 'flex'; 
+  updateLogoTextSize(); 
+  
+  setTimeout(setInitialLogoPosition, 500);
+
+  const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+              const currentWidth = logoOverlay.offsetWidth;
+              const currentHeight = logoOverlay.offsetHeight;
+              if (lastDropped.width !== currentWidth || lastDropped.height !== currentHeight) {
+                updateLogoTextSize();
+                lastDropped = { width: currentWidth, height: currentHeight };
+              }
+          }
+      }
+  });
+  
+  observer.observe(logoOverlay, { attributes: true, attributeFilter: ['style'] });
+
+
+  // *** லோகோ ஓவர்லேவை இழுத்துச் செல்ல (Draggable) குறியீடு ***
+  let isDragging = false;
+  let offsetX, offsetY;
+  
+  logoOverlay.addEventListener('mousedown', dragStart);
+  logoOverlay.addEventListener('touchstart', dragStart); 
+
+  function dragStart(e) {
+    if (e.target !== logoOverlay && !e.target.closest('#logoOverlay')) return;
+
+    const rect = logoOverlay.getBoundingClientRect();
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+
+    const resizeHandleSize = 15; 
+    const isResizing = (clientX > rect.right - resizeHandleSize && clientY > rect.bottom - resizeHandleSize) ||
+                       (clientX < rect.left + resizeHandleSize && clientY < rect.top + resizeHandleSize) ||
+                       (clientX > rect.right - resizeHandleSize && clientY < rect.top + resizeHandleSize) ||
+                       (clientX < rect.left + resizeHandleSize && clientY > rect.bottom - resizeHandleSize);
+    
+    if (isResizing) {
+        isDragging = false;
+        return;
+    }
+
+    isDragging = true;
+    
+    offsetX = clientX - rect.left;
+    offsetY = clientY - rect.top;
+
+    e.preventDefault(); 
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('touchmove', dragMove);
+    document.addEventListener('touchend', dragEnd);
+    
+  }
+
+  function dragMove(e) {
+    if (!isDragging) return;
+    
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+
+    const containerRect = videoContainer.getBoundingClientRect();
+    const logoRect = logoOverlay.getBoundingClientRect();
+
+    let newX = clientX - containerRect.left - offsetX;
+    let newY = clientY - containerRect.top - offsetY;
+
+    newX = Math.max(0, Math.min(newX, containerRect.width - logoRect.width));
+    newY = Math.max(0, Math.min(newY, containerRect.height - logoRect.height));
+
+    logoOverlay.style.left = `${newX}px`;
+    logoOverlay.style.top = `${newY}px`;
+    logoOverlay.style.right = 'auto'; 
+    logoOverlay.style.bottom = 'auto';
+  }
+
+  function dragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('mouseup', dragEnd);
+    document.removeEventListener('touchmove', dragMove);
+    document.removeEventListener('touchend', dragEnd);
+  }
+
+});
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(console.error);
+  }
+  let deferredPrompt;
+  const installBtn = document.getElementById('btnInstall');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); deferredPrompt = e;
+    if (installBtn) installBtn.style.display = 'inline-block';
+  });
+  installBtn?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    installBtn.disabled = true;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "VIDEO SCREENSHOT by Anbu (Optimized Stability)",
+  "short_name": "VSnap Anbu",
+  "description": "Video Frame Capturer optimized for stability and high resolution.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#22c5e5",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
